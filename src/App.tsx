@@ -1,5 +1,5 @@
 import CalorieForm from "./components/CalorieForm/CalorieForm.tsx";
-import MealList from "./components/MealList/MealList.tsx";
+import MealList from "./containers/MealList/MealList.tsx";
 import { Route, Routes } from "react-router-dom";
 import NavBar from "./components/NavBar/NavBar.tsx";
 import { ToastContainer } from "react-toastify";

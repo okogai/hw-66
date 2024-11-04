@@ -1,8 +1,8 @@
 import { IMealFromDB } from "../../types";
 import { useEffect, useState } from "react";
 import axiosAPI from "../../axiosAPI.ts";
-import Loader from "../Loader/Loader.tsx";
-import MealCard from "../MealCard/MealCard.tsx";
+import Loader from "../../components/Loader/Loader.tsx";
+import MealCard from "../../components/MealCard/MealCard.tsx";
 import { Box, Container, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
