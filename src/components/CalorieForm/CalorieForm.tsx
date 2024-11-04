@@ -13,6 +13,8 @@ import {
 } from '@mui/material';
 import axiosAPI from '../../axiosAPI.ts';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import ButtonSpinner from '../UI/ButtonSpinner.tsx';
 
 const initialForm = {
   mealType: '',
@@ -30,6 +32,7 @@ const mealTypes = [
 
 const CalorieForm = () => {
   const [meal, setMeal] = useState<IMeal>(initialForm);
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const {id} = useParams();
 
@@ -43,20 +46,31 @@ const CalorieForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    if (!meal.mealType || !meal.text || !meal.date || meal.calories <= 0) {
+      toast.warning('Please fill in all fields with valid data!');
+      setLoading(false);
+      return;
+    }
+
     if (id) {
       try {
-        console.log(meal);
         await axiosAPI.put(`/meals/${id}.json`, meal);
+        toast.success('Meal changed successfully!');
       } catch (e) {
-        console.error(e);
+        toast.error('Failed to change meal!');
+      } finally {
+        setLoading(false);
       }
     } else {
       try {
         await axiosAPI.post(`/meals.json`, meal);
+        toast.success('Meal added successfully!');
         navigate("/");
       } catch (error) {
-        console.error(error);
+        toast.error('Failed to add meal!');
       } finally {
+        setLoading(false);
         setMeal(initialForm);
       }
     }
@@ -65,12 +79,16 @@ const CalorieForm = () => {
   const GetMealFromDB = async () => {
     if (id) {
       try {
+        setLoading(true);
         const response = await axiosAPI.get(`/meals/${id}.json`);
         if (response.data) {
           setMeal(response.data);
+          toast.success('Meal loaded successfully!');
         }
       } catch (e) {
-        console.error(e);
+        toast.error('Failed to load meal!');
+      } finally {
+        setLoading(false);
       }
     } else {
       setMeal(initialForm);
@@ -136,7 +154,17 @@ const CalorieForm = () => {
         sx={{mb: 2}}
       />
 
-      <Button type="submit" variant="contained" color="primary"  fullWidth>
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        fullWidth
+        disabled={loading}
+        sx={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        {loading && (
+          <ButtonSpinner/>
+        )}
         Save
       </Button>
     </Box>
