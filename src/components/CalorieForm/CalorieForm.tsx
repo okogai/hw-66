@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { IMeal } from '../../types';
+import React, { useEffect, useState } from "react";
+import { IMeal } from "../../types";
 import {
   Box,
   Button,
@@ -9,38 +9,42 @@ import {
   Select,
   SelectChangeEvent,
   TextField,
-  Typography
-} from '@mui/material';
-import axiosAPI from '../../axiosAPI.ts';
-import { useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import ButtonSpinner from '../UI/ButtonSpinner.tsx';
+  Typography,
+} from "@mui/material";
+import axiosAPI from "../../axiosAPI.ts";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import ButtonSpinner from "../UI/ButtonSpinner.tsx";
 
 const initialForm = {
-  mealType: '',
-  text: '',
-  date: '',
-  calories: 0
+  mealType: "",
+  text: "",
+  date: "",
+  calories: 0,
 };
 
 const mealTypes = [
-  { name: 'Breakfast', label: 'breakfast', id: 1 },
-  { name: 'Snack', label: 'snack', id: 2 },
-  { name: 'Lunch', label: 'lunch', id: 3},
-  { name: 'Dinner', label: 'dinner', id: 4 },
+  { name: "Breakfast", label: "breakfast", id: 1 },
+  { name: "Snack", label: "snack", id: 2 },
+  { name: "Lunch", label: "lunch", id: 3 },
+  { name: "Dinner", label: "dinner", id: 4 },
 ];
 
 const CalorieForm = () => {
   const [meal, setMeal] = useState<IMeal>(initialForm);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-  const {id} = useParams();
+  const { id } = useParams();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | SelectChangeEvent<string>,
+  ) => {
     const { name, value } = e.target;
     setMeal((prevState) => ({
       ...prevState,
-      [name]: name === 'calories' ? Number(value) : value,
+      [name]: name === "calories" ? Number(value) : value,
     }));
   };
 
@@ -48,7 +52,7 @@ const CalorieForm = () => {
     e.preventDefault();
     setLoading(true);
     if (!meal.mealType || !meal.text || !meal.date || meal.calories <= 0) {
-      toast.warning('Please fill in all fields with valid data!');
+      toast.warning("Please fill in all fields with valid data!");
       setLoading(false);
       return;
     }
@@ -56,19 +60,19 @@ const CalorieForm = () => {
     if (id) {
       try {
         await axiosAPI.put(`/meals/${id}.json`, meal);
-        toast.success('Meal changed successfully!');
+        toast.success("Meal changed successfully!");
       } catch (e) {
-        toast.error('Failed to change meal!');
+        toast.error("Failed to change meal!");
       } finally {
         setLoading(false);
       }
     } else {
       try {
         await axiosAPI.post(`/meals.json`, meal);
-        toast.success('Meal added successfully!');
+        toast.success("Meal added successfully!");
         navigate("/");
       } catch (error) {
-        toast.error('Failed to add meal!');
+        toast.error("Failed to add meal!");
       } finally {
         setLoading(false);
         setMeal(initialForm);
@@ -83,10 +87,10 @@ const CalorieForm = () => {
         const response = await axiosAPI.get(`/meals/${id}.json`);
         if (response.data) {
           setMeal(response.data);
-          toast.success('Meal loaded successfully!');
+          toast.success("Meal loaded successfully!");
         }
       } catch (e) {
-        toast.error('Failed to load meal!');
+        toast.error("Failed to load meal!");
       } finally {
         setLoading(false);
       }
@@ -101,11 +105,16 @@ const CalorieForm = () => {
 
   return (
     <Box
-      sx={{maxWidth: 400, mx: 'auto', p: 3, border: '1px solid #ccc', borderRadius: 2}}
+      sx={{
+        maxWidth: 400,
+        mx: "auto",
+        p: 3,
+        border: "1px solid #ccc",
+        borderRadius: 2,
+      }}
       component="form"
       onSubmit={handleSubmit}
     >
-
       <FormControl fullWidth sx={{ mb: 2 }}>
         <InputLabel>Select Type of meal</InputLabel>
         <Select
@@ -131,7 +140,7 @@ const CalorieForm = () => {
         sx={{ mb: 2 }}
       />
 
-      <Typography variant="h6" sx={{mb: 2}}>
+      <Typography variant="h6" sx={{ mb: 2 }}>
         Select date
       </Typography>
 
@@ -141,7 +150,7 @@ const CalorieForm = () => {
         value={meal.date}
         onChange={handleChange}
         fullWidth
-        sx={{mb: 2}}
+        sx={{ mb: 2 }}
       />
 
       <TextField
@@ -151,7 +160,7 @@ const CalorieForm = () => {
         value={meal.calories}
         onChange={handleChange}
         fullWidth
-        sx={{mb: 2}}
+        sx={{ mb: 2 }}
       />
 
       <Button
@@ -160,11 +169,14 @@ const CalorieForm = () => {
         color="primary"
         fullWidth
         disabled={loading}
-        sx={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        sx={{
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
       >
-        {loading && (
-          <ButtonSpinner/>
-        )}
+        {loading && <ButtonSpinner />}
         Save
       </Button>
     </Box>

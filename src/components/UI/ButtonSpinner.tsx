@@ -1,11 +1,11 @@
-import { CircularProgress } from '@mui/material';
+import { CircularProgress } from "@mui/material";
 
 const ButtonSpinner = () => {
   return (
     <CircularProgress
       size={32}
       thickness={5}
-      sx={{ position: 'absolute', color: 'white' }}
+      sx={{ position: "absolute", color: "white" }}
     />
   );
 };
