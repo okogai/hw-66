@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IMeal } from '../../types';
 import {
   Box,
@@ -12,6 +12,7 @@ import {
   Typography
 } from '@mui/material';
 import axiosAPI from '../../axiosAPI.ts';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const initialForm = {
   mealType: '',
@@ -29,26 +30,56 @@ const mealTypes = [
 
 const CalorieForm = () => {
   const [meal, setMeal] = useState<IMeal>(initialForm);
+  const navigate = useNavigate();
+  const {id} = useParams();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
-    console.log(e.target.name);
+    const { name, value } = e.target;
     setMeal((prevState) => ({
       ...prevState,
-      [e.target.name]: e.target.value,
+      [name]: name === 'calories' ? Number(value) : value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(meal);
-    try {
-      await axiosAPI.post(`/meals.json`, meal);
-    } catch (error) {
-      console.error(error);
-    } finally {
+    if (id) {
+      try {
+        console.log(meal);
+        await axiosAPI.put(`/meals/${id}.json`, meal);
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      try {
+        await axiosAPI.post(`/meals.json`, meal);
+        navigate("/");
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setMeal(initialForm);
+      }
+    }
+  };
+
+  const GetMealFromDB = async () => {
+    if (id) {
+      try {
+        const response = await axiosAPI.get(`/meals/${id}.json`);
+        if (response.data) {
+          setMeal(response.data);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
       setMeal(initialForm);
     }
   };
+
+  useEffect(() => {
+    void GetMealFromDB();
+  }, [id]);
 
   return (
     <Box
